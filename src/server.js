@@ -17,7 +17,19 @@ const publicDirectory = path.join(__dirname, "../public");
 const server = express();
 const port = process.env.PORT || 3001;
 
-server.use(cors());
+const whitelist = [process.env.FRONTEND_URL, process.env.FRONTEND_PROD_URL];
+
+server.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by cors!"));
+      }
+    },
+  })
+);
 server.use(express.json());
 server.use(express.static(publicDirectory));
 
