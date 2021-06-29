@@ -37,7 +37,7 @@ server.use(express.static(publicDirectory));
 
 server.use("/authors", authorsRouter);
 server.use("/blogs", blogsRouter);
-
+// error handlers
 server.use(notFound);
 server.use(forbidden);
 server.use(catchAllErrorHandler);
