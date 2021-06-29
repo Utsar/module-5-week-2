@@ -3,7 +3,7 @@ import cors from "cors";
 import listEndpoints from "express-list-endpoints";
 
 import authorsRouter from "./authors/index.js";
-import blogsRouter from "./blogs/index.js";
+import blogsRouter from "../src/blogs/index.js";
 
 import { notFound, forbidden, catchAllErrorHandler } from "./errorHandlers.js";
 
@@ -15,7 +15,7 @@ const __dirname = dirname(__filename);
 const publicDirectory = path.join(__dirname, "../public");
 
 const server = express();
-const port = PORT;
+const port = process.env.PORT || 3001;
 
 server.use(cors());
 server.use(express.json());
