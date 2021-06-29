@@ -17,6 +17,8 @@ const publicDirectory = path.join(__dirname, "../public");
 const server = express();
 const port = process.env.PORT || 3001;
 
+console.log("DB CONNECTION STRING: ", process.env.MYDBCONNECTIONSTRING);
+
 const whitelist = [process.env.FRONTEND_URL, process.env.FRONTEND_PROD_URL];
 
 server.use(
