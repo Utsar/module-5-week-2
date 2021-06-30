@@ -1,25 +1,21 @@
 import express from "express";
-
 import fs from "fs";
-
 import uniqid from "uniqid";
-
 import path, { dirname } from "path";
-
 import { fileURLToPath } from "url";
-
 import {
   checkBlogPostSchema,
   checkSearchSchema,
   checkValidationResult,
 } from "./validation.js";
 
+import { pipeline } from "stream";
+import { getBlogs, getBlogsReadableStream } from "../../lib/fs-tools.js";
+import { generatePDFReadableStream } from "../../lib/pdf/index.js";
+
 const __filename = fileURLToPath(import.meta.url);
-
 const __dirname = dirname(__filename);
-
 const blogsFilePath = path.join(__dirname, "blogs.json");
-
 const router = express.Router();
 
 // get all blogs
@@ -161,6 +157,43 @@ router.put("/:id", async (req, res, next) => {
     res.send(changedblog);
   } catch (error) {
     res.send(500).send({ message: error.message });
+  }
+});
+
+// pdf endpoints
+
+router.get("/JSONDownload", async (req, res, next) => {
+  try {
+    // SOURCE (books.json) --> DESTINATION (response)
+
+    // set save file option
+    res.setHeader("Content-Disposition", "attachment; filename=blogs.json");
+    const source = getBlogsReadableStream();
+    console.log(source);
+    const destination = res;
+
+    pipeline(source, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
+  }
+});
+
+router.get("/PDFDownload", async (req, res, next) => {
+  try {
+    res.setHeader("Content-Disposition", "attachment; filename=test.pdf");
+    const source = generatePDFReadableStream();
+    console.log(source);
+    const destination = res;
+
+    pipeline(source, destination, (err) => {
+      if (err) next(err);
+    });
+  } catch (error) {
+    console.log(error);
+    next(error);
   }
 });
 
